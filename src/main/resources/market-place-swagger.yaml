@@ -1,0 +1,95 @@
+swagger: "2.0"
+info:
+  description: "This is the market place's products service. This service handles any actions related to products"
+  version: "1.0.0"
+  title: "Market Place"
+  contact:
+    name: "Vanderson Assis"
+    email: "assis.vanderson@gmail.com"
+host: "localhost"
+basePath: "/market-place/api/v1"
+schemes:
+  - "http"
+paths:
+  /products:
+    get:
+      tags:
+        - "Products"
+      summary: "List all the products in our market place"
+      description: "This endpoint will return all the products we have registered in our database"
+      operationId: "listProducts"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        '200':
+          description: "Products response"
+          schema:
+            $ref: '#/definitions/ProductListResponse'
+        '401':
+          description: "Authorization failed"
+        '500':
+          description: "Internal server error"
+        default:
+          description: "Unexpected error"
+    put:
+      tags:
+        - "Products"
+      summary: "Update an existing product"
+      description: "The passed product will be updated in the database"
+      operationId: "updateProduct"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Product object that needs to be added to the store"
+          required: true
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Product not found"
+        405:
+          description: "Validation exception"
+
+definitions:
+  ProductListResponse:
+    type: array
+    items:
+      $ref: "#/definitions/ProductResponse"
+
+  ProductResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      idSeller:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      price:
+        type: number
+        format: currency
+
+  Product:
+    type: "object"
+    properties:
+      id:
+        type: string
+      idSeller:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      price:
+        type: number
+        format: currency
