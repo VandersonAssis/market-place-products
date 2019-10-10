@@ -33,6 +33,33 @@ paths:
           description: "Internal server error"
         default:
           description: "Unexpected error"
+    post:
+      tags:
+        - "Products"
+      summary: "Create a new product"
+      description: "The product passed will be saved in the database"
+      operationId: "saveProduct"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Product object that will be added to our database"
+          required: true
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        '200':
+          description: "Products response"
+          schema:
+            $ref: '#/definitions/Product'
+        400:
+          description: "Invalid data object"
+        405:
+          description: "Validation exception"
+
     put:
       tags:
         - "Products"
@@ -46,7 +73,7 @@ paths:
       parameters:
         - in: "body"
           name: "body"
-          description: "Product object that needs to be added to the store"
+          description: "Product object that will be updated in our database"
           required: true
           schema:
             $ref: "#/definitions/Product"
@@ -62,25 +89,15 @@ definitions:
   ProductListResponse:
     type: array
     items:
-      $ref: "#/definitions/ProductResponse"
-
-  ProductResponse:
-    type: object
-    properties:
-      id:
-        type: string
-      idSeller:
-        type: string
-      name:
-        type: string
-      description:
-        type: string
-      price:
-        type: number
-        format: currency
+      $ref: "#/definitions/Product"
 
   Product:
     type: "object"
+    required:
+      - idSeller
+      - name
+      - description
+      - price
     properties:
       id:
         type: string
@@ -93,3 +110,4 @@ definitions:
       price:
         type: number
         format: currency
+        minimum: 0.01
