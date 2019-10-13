@@ -95,6 +95,7 @@ definitions:
     type: "object"
     required:
       - idSeller
+      - model
       - name
       - description
       - price
@@ -102,6 +103,8 @@ definitions:
       id:
         type: string
       idSeller:
+        type: string
+      model:
         type: string
       name:
         type: string

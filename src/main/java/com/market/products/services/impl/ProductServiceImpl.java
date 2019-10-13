@@ -5,6 +5,7 @@ import com.market.products.model.Product;
 import com.market.products.repositories.ProductRepository;
 import com.market.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDocument save(Product product) {
         return this.productRepository.save(ProductDocument.builder()
                 .idSeller(product.getIdSeller())
+                .model(product.getModel())
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
