@@ -12,27 +12,6 @@ schemes:
   - "http"
 paths:
   /products:
-    get:
-      tags:
-        - "Products"
-      summary: "List all the products in our market place"
-      description: "This endpoint will return all the products we have registered in our database"
-      operationId: "listProducts"
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-      responses:
-        '200':
-          description: "Products response"
-          schema:
-            $ref: '#/definitions/ProductListResponse'
-        '401':
-          description: "Authorization failed"
-        '500':
-          description: "Internal server error"
-        default:
-          description: "Unexpected error"
     post:
       tags:
         - "Products"
@@ -59,7 +38,6 @@ paths:
           description: "Invalid data object"
         405:
           description: "Validation exception"
-
     put:
       tags:
         - "Products"
@@ -84,6 +62,34 @@ paths:
           description: "Product not found"
         405:
           description: "Validation exception"
+  /products/{idSeller}/seller:
+    get:
+      tags:
+        - "Products"
+      summary: "List all the products in our market place"
+      description: "This endpoint will return all the products we have registered in our database"
+      operationId: "listProducts"
+      parameters:
+        - name: idSeller
+          in: path
+          type: string
+          required: true
+          description: "The seller's id to return its products"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        '200':
+          description: "Products response"
+          schema:
+            $ref: '#/definitions/ProductListResponse'
+        '401':
+          description: "Authorization failed"
+        '500':
+          description: "Internal server error"
+        default:
+          description: "Unexpected error"
 
 definitions:
   ProductListResponse:

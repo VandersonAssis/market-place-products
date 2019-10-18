@@ -27,8 +27,8 @@ public class ProductControllerTest {
 
     @Test
     public void shouldCallListProductsAndReturnProductListResponseObject() {
-        when(this.productsController.listProducts()).thenReturn(new ResponseEntity<>(this.buildProductListResponseObject(), OK));
-        assertNotNull(this.productsController.listProducts().getBody());
+        when(this.productsController.listProducts("test_id_seller")).thenReturn(new ResponseEntity<>(this.buildProductListResponseObject(), OK));
+        assertNotNull(this.productsController.listProducts("est_id_seller").getBody());
     }
 
     @Test
