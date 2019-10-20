@@ -1,5 +1,5 @@
-# market-place-exception-handlers
-This project handles all mapped exceptions for the Market Place
+# market-place-products
+This project interfaces all products related actions.
 
 #### Disclaimer
 This and any other piece of code belonging to the Market Place project is being created with intention to show 
