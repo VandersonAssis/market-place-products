@@ -42,7 +42,7 @@ paths:
       tags:
         - "Products"
       summary: "Update an existing product"
-      description: "The passed product will be updated in the database"
+      description: "The product will be updated in the database"
       operationId: "updateProduct"
       consumes:
         - "application/json"
@@ -62,16 +62,40 @@ paths:
           description: "Product not found"
         405:
           description: "Validation exception"
+  /products/{idProduct}:
+    delete:
+      tags:
+        - "Products"
+      summary: "Deletes a product document"
+      description: "The product that contains the parameter id will be deleted"
+      operationId: "delete"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: idProduct
+          type: string
+          required: true
+          description: "Id of the product to be deleted"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Product not found"
+        405:
+          description: "Validation exception"
   /products/{idSeller}/seller:
     get:
       tags:
         - "Products"
       summary: "List all the products in our market place"
       description: "This endpoint will return all the products we have registered in our database"
-      operationId: "listProducts"
+      operationId: "listProductsBySeller"
       parameters:
-        - name: idSeller
-          in: path
+        - in: path
+          name: idSeller
           type: string
           required: true
           description: "The seller's id to return its products"

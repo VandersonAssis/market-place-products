@@ -8,18 +8,18 @@ import com.market.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
+
+    ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     @Override
     public ProductDocument save(Product product) {
@@ -43,12 +43,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean update(Product product) {
-        return false;
+    public void update(Product product) {
+
     }
 
     @Override
-    public boolean delete(String id) {
-        return false;
+    public void delete(String productId) {
+        this.productRepository.deleteById(productId);
     }
 }

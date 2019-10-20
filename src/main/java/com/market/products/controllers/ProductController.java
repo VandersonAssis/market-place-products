@@ -9,14 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
 public class ProductController extends BaseController implements ProductsApi {
-
     @Autowired
     private ProductService productService;
 
@@ -27,12 +25,18 @@ public class ProductController extends BaseController implements ProductsApi {
     }
 
     @Override
-    public ResponseEntity<ProductListResponse> listProducts(String idSeller) {
+    public ResponseEntity<ProductListResponse> listProductsBySeller(String idSeller) {
         List<Product> products = this.productService.findByIdSeller(idSeller);
         ProductListResponse productListResponse = new ProductListResponse();
         productListResponse.addAll(products);
 
         return new ResponseEntity<>(productListResponse, OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> delete(String idProduct) {
+        this.productService.delete(idProduct);
+        return new ResponseEntity<>(NO_CONTENT);
     }
 
     @Override

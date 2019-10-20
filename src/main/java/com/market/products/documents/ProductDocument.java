@@ -1,8 +1,10 @@
 package com.market.products.documents;
 
 import com.market.products.model.Product;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,6 +16,8 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "product")
 @CompoundIndex(name = "idSeller_model_name", def = "{'idSeller': 1, 'model': 1, 'name': 1}", unique = true)
 public class ProductDocument {
