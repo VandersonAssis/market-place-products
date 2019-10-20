@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class ProductServiceImplTest {
@@ -46,6 +46,13 @@ public class ProductServiceImplTest {
         assertThrows(ResourceNotFoundException.class, () -> {
             this.productService.findByIdSeller("test_id_seller");
         });
+    }
+
+    @Test
+    public void deleteShouldCallRepositoryDeleteMethod() {
+        doNothing().when(this.productRepository).deleteById(anyString());
+        this.productService.delete("test_product_id");
+        verify(this.productRepository, times(1)).deleteById(anyString());
     }
 
     @Test

@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,9 +26,9 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 public class ProductControllerTest {
@@ -53,7 +54,8 @@ public class ProductControllerTest {
     @Test
     public void shouldCallListProductsAndReturnProductListResponseObject() throws Exception {
         when(this.productService.findByIdSeller(anyString())).thenReturn(new ArrayList<>());
-        this.mockMvc.perform(MockMvcRequestBuilders.get(this.apiPrefix + "/products/id_seller_test/seller").contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get(this.apiPrefix + "/products/id_seller_test/seller")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -66,11 +68,20 @@ public class ProductControllerTest {
         when(this.productService.save(any(Product.class))).thenReturn(testProductDocument);
         when(this.productDocument.convertToProduct()).thenReturn(testProduct);
 
-        this.mockMvc.perform(MockMvcRequestBuilders.post(this.apiPrefix + "/products")
+        this.mockMvc.perform(post(this.apiPrefix + "/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new Gson().toJson(testProduct)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(expectedJsonResponse));
+    }
+
+    @Test
+    public void shouldDeleteProductAndReturnNoContentHttpStatus() throws Exception {
+        doNothing().when(this.productService).delete(anyString());
+        this.mockMvc.perform(delete(this.apiPrefix + "/products/test_id_product")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andExpect(jsonPath("$").doesNotExist());
     }
 
     @Test

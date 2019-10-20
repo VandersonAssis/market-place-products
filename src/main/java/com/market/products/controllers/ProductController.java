@@ -1,7 +1,6 @@
 package com.market.products.controllers;
 
 import com.market.products.api.ProductsApi;
-import com.market.products.documents.ProductDocument;
 import com.market.products.model.Product;
 import com.market.products.model.ProductListResponse;
 import com.market.products.services.ProductService;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -33,6 +31,12 @@ public class ProductController extends BaseController implements ProductsApi {
         productListResponse.addAll(products);
 
         return new ResponseEntity<>(productListResponse, OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> delete(String idProduct) {
+        this.productService.delete(idProduct);
+        return new ResponseEntity<>(NO_CONTENT);
     }
 
     @Override
