@@ -68,7 +68,7 @@ paths:
         - "Products"
       summary: "List all the products in our market place"
       description: "This endpoint will return all the products we have registered in our database"
-      operationId: "listProducts"
+      operationId: "listProductsBySeller"
       parameters:
         - name: idSeller
           in: path

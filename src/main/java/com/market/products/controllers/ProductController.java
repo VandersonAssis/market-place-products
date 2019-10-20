@@ -1,6 +1,7 @@
 package com.market.products.controllers;
 
 import com.market.products.api.ProductsApi;
+import com.market.products.documents.ProductDocument;
 import com.market.products.model.Product;
 import com.market.products.model.ProductListResponse;
 import com.market.products.services.ProductService;
@@ -16,7 +17,6 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 public class ProductController extends BaseController implements ProductsApi {
-
     @Autowired
     private ProductService productService;
 
@@ -27,7 +27,7 @@ public class ProductController extends BaseController implements ProductsApi {
     }
 
     @Override
-    public ResponseEntity<ProductListResponse> listProducts(String idSeller) {
+    public ResponseEntity<ProductListResponse> listProductsBySeller(String idSeller) {
         List<Product> products = this.productService.findByIdSeller(idSeller);
         ProductListResponse productListResponse = new ProductListResponse();
         productListResponse.addAll(products);
