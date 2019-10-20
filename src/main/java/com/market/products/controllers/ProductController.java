@@ -25,6 +25,12 @@ public class ProductController extends BaseController implements ProductsApi {
     }
 
     @Override
+    public ResponseEntity<Void> updateProduct(@Valid Product product) {
+        this.productService.save(product);
+        return new ResponseEntity<>(NO_CONTENT);
+    }
+
+    @Override
     public ResponseEntity<ProductListResponse> listProductsBySeller(String idSeller) {
         List<Product> products = this.productService.findByIdSeller(idSeller);
         ProductListResponse productListResponse = new ProductListResponse();
@@ -37,10 +43,5 @@ public class ProductController extends BaseController implements ProductsApi {
     public ResponseEntity<Void> delete(String idProduct) {
         this.productService.delete(idProduct);
         return new ResponseEntity<>(NO_CONTENT);
-    }
-
-    @Override
-    public ResponseEntity<Void> updateProduct(@Valid Product body) {
-        return null;
     }
 }

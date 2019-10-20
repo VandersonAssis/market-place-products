@@ -8,6 +8,5 @@ import java.util.List;
 public interface ProductService {
     ProductDocument save(Product product);
     List<Product> findByIdSeller(String idSeller);
-    void update(Product product);
     void delete(String productId);
 }

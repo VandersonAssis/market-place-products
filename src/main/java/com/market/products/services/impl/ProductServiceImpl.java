@@ -24,6 +24,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDocument save(Product product) {
         return this.productRepository.save(ProductDocument.builder()
+                .id(product.getId())
                 .idSeller(product.getIdSeller())
                 .model(product.getModel())
                 .name(product.getName())
@@ -40,11 +41,6 @@ public class ProductServiceImpl implements ProductService {
         if(products.isEmpty()) throw new ResourceNotFoundException();
 
         return products;
-    }
-
-    @Override
-    public void update(Product product) {
-
     }
 
     @Override

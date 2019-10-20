@@ -76,6 +76,18 @@ public class ProductControllerTest {
     }
 
     @Test
+    public void shouldUpdateProductReturnNoContentHttpStatusAndNoBody() throws Exception {
+        Product testProduct = this.buildTestProductDocument().convertToProduct();
+        when(this.productService.save(any(Product.class))).thenReturn(null);
+
+        this.mockMvc.perform(put(this.apiPrefix + "/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new Gson().toJson(testProduct)))
+                .andExpect(status().isNoContent())
+                .andExpect(jsonPath("$").doesNotExist());
+    }
+
+    @Test
     public void shouldDeleteProductAndReturnNoContentHttpStatus() throws Exception {
         doNothing().when(this.productService).delete(anyString());
         this.mockMvc.perform(delete(this.apiPrefix + "/products/test_id_product")
