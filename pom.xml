@@ -27,6 +27,11 @@
 		<jacoco.plugin.version>0.8.5</jacoco.plugin.version>
 		<surefire.plugin.version>2.21.0</surefire.plugin.version>
 		<surefire.providers.version>2.22.2</surefire.providers.version>
+
+		<sonar.coverage.exclusions>
+			**/MarketPlaceProductsApplication.java,
+			**/documents/**/*
+		</sonar.coverage.exclusions>
 	</properties>
 
 	<dependencies>
