@@ -1,6 +1,18 @@
 # market-place-products
 This project interfaces all products related actions.
 
+#### Technologies Used
+- Java 12
+- MongoDB
+- Swagger
+- Lombok
+- Spring Boot
+- Sonar
+- Jacoco
+- JUnit
+- Mockito
+- Gson
+
 #### Disclaimer
 This and any other piece of code belonging to the Market Place project is being created with intention to show 
 interviewers my abilities creating a system using microservices architecture. 
