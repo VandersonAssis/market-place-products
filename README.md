@@ -12,6 +12,7 @@ This project interfaces all products related actions.
 - JUnit
 - Mockito
 - Gson
+- HATEOAS   
 
 #### Disclaimer
 This and any other piece of code belonging to the Market Place project is being created with intention to show 

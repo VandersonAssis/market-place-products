@@ -40,7 +40,7 @@ public class ProductController extends BaseController implements ProductsApi {
     }
 
     @Override
-    public ResponseEntity<Void> delete(String idProduct) {
+    public ResponseEntity<Void> deleteProduct(String idProduct) {
         this.productService.delete(idProduct);
         return new ResponseEntity<>(NO_CONTENT);
     }

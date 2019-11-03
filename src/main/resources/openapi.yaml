@@ -1,0 +1,134 @@
+openapi: 3.0.0
+info:
+  description: This is the market place's products service. This service handles any
+    actions related to products
+  version: 1.0.0
+  title: Market Place
+  contact:
+    name: Vanderson Assis
+    email: assis.vanderson@gmail.com
+paths:
+  /products:
+    post:
+      tags:
+        - Products
+      summary: Creates a new product
+      description: The product passed will be saved in the database
+      operationId: saveProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+        description: Product object that will be added to our database
+        required: true
+      responses:
+        "200":
+          description: Products response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          description: Invalid data object
+        "405":
+          description: Validation exception
+    put:
+      tags:
+        - Products
+      summary: Updates an existing product
+      description: The product will be updated in the database
+      operationId: updateProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+        description: Product object that will be updated in our database
+        required: true
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Product not found
+        "405":
+          description: Validation exception
+  "/products/{idProduct}":
+    delete:
+      tags:
+        - Products
+      summary: Deletes a product document
+      description: The product that contains the parameter id will be deleted
+      operationId: deleteProduct
+      parameters:
+        - in: path
+          name: idProduct
+          required: true
+          description: Id of the product to be deleted
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Product not found
+        "405":
+          description: Validation exception
+  "/products/{idSeller}/seller":
+    get:
+      tags:
+        - Products
+      summary: List all the products in our market place
+      description: This endpoint will return all the products we have registered in our
+        database
+      operationId: listProductsBySeller
+      parameters:
+        - in: path
+          name: idSeller
+          required: true
+          description: The seller's id to return its products
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Products response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductListResponse"
+        "401":
+          description: Authorization failed
+        "500":
+          description: Internal server error
+        default:
+          description: Unexpected error
+servers:
+  - url: http://localhost/market-place/api/v1
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - idSeller
+        - name
+        - model
+        - description
+        - price
+      properties:
+        id:
+          type: string
+        idSeller:
+          type: string
+        name:
+          type: string
+        model:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 0.01
+    ProductListResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Product"
