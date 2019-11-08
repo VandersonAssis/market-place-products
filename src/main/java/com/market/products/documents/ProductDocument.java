@@ -28,6 +28,7 @@ public class ProductDocument {
     private String name;
     private String description;
     private BigDecimal price;
+    private Integer quantity;
 
     @CreatedDate
     private LocalDateTime dateCreated;
@@ -41,6 +42,7 @@ public class ProductDocument {
                 .model(this.model)
                 .name(this.name)
                 .description(this.description)
-                .price(this.price);
+                .price(this.price)
+                .quantity(this.quantity);
     }
 }

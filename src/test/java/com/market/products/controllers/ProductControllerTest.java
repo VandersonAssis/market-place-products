@@ -3,17 +3,15 @@ package com.market.products.controllers;
 import com.google.gson.Gson;
 import com.market.products.documents.ProductDocument;
 import com.market.products.model.Product;
+import com.market.products.model.ProductLock;
 import com.market.products.services.ProductService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.validation.ConstraintViolation;
@@ -26,7 +24,9 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -55,7 +55,7 @@ public class ProductControllerTest {
     public void shouldCallListProductsAndReturnProductListResponseObject() throws Exception {
         when(this.productService.findByIdSeller(anyString())).thenReturn(new ArrayList<>());
         this.mockMvc.perform(get(this.apiPrefix + "/products/id_seller_test/seller")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -69,7 +69,7 @@ public class ProductControllerTest {
         when(this.productDocument.convertToProduct()).thenReturn(testProduct);
 
         this.mockMvc.perform(post(this.apiPrefix + "/products")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .content(new Gson().toJson(testProduct)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(expectedJsonResponse));
@@ -81,25 +81,45 @@ public class ProductControllerTest {
         when(this.productService.save(any(Product.class))).thenReturn(null);
 
         this.mockMvc.perform(put(this.apiPrefix + "/products")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .content(new Gson().toJson(testProduct)))
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$").doesNotExist());
     }
 
     @Test
+    public void shouldCallProductServiceLockForSellingMethodAndReturnHttpOk() throws Exception {
+        when(this.productService.lockForSelling(any(ProductLock.class))).thenReturn(true);
+
+        this.mockMvc.perform(post(this.apiPrefix + "/products/lock")
+                .contentType(APPLICATION_JSON)
+                .content(new Gson().toJson(new ProductLock().idProduct("test_id_product").quantity(1))))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldCheckAllProductLockRequiredFields() {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        ProductLock productLock = new ProductLock().idProduct("test_id_product").quantity(1);
+        Set<ConstraintViolation<ProductLock>> violations = validator.validate(productLock);
+        assertTrue(violations.isEmpty());
+    }
+
+    @Test
     public void shouldDeleteProductAndReturnNoContentHttpStatus() throws Exception {
         doNothing().when(this.productService).delete(anyString());
         this.mockMvc.perform(delete(this.apiPrefix + "/products/test_id_product")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andExpect(jsonPath("$").doesNotExist());
     }
 
     @Test
-    public void shouldCheckAllRequiredFields() {
+    public void shouldCheckAllProductRequiredFields() {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Product product = new Product().idSeller("test_id").name("test_name").description("test_description").model("test_model").price(new BigDecimal(1));
+        Product product = new Product().idSeller("test_id").name("test_name").description("test_description")
+                .model("test_model").price(new BigDecimal(1))
+                .quantity(1);
         Set<ConstraintViolation<Product>> violations = validator.validate(product);
         assertTrue(violations.isEmpty());
     }
@@ -111,6 +131,7 @@ public class ProductControllerTest {
                 .name("test_name")
                 .description("test_description")
                 .price(new BigDecimal(10))
+                .quantity(1)
                 .build();
     }
 }

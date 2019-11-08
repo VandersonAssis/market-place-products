@@ -78,7 +78,7 @@ paths:
     get:
       tags:
         - Products
-      summary: List all the products in our market place
+      summary: List all the products in our market place for the selected seller
       description: This endpoint will return all the products we have registered in our
         database
       operationId: listProductsBySeller
@@ -102,6 +102,32 @@ paths:
           description: Internal server error
         default:
           description: Unexpected error
+  "/products/lock":
+    post:
+      tags:
+        - Products
+      summary: Locks the quantity of products sent in the payload
+      description: If enough products for the quantity in the payload, they will be locked, so the order can go on. If the order fails, the locked products will be
+                   unlocked to be sold to another customer.
+      operationId: lockProductQuantity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductLock"
+        description: The product lock object containing the product id and quantity to be locked.
+        required: true
+      responses:
+        "200":
+          description: The product's quantity has been locked and can be safely ordered.
+        "400":
+          description: This status code will be returned if the quantity passed is greater then the available or
+            if the request is malformed. Either way, there will be a descriptive message and internal code to why the error
+            happened.
+        "401":
+          description: The client is not authorized to access this endpoint
+        "500":
+          description: Something went wrong in the server side. The client can't do anything about it and should report the error to the system administrator.
 servers:
   - url: http://localhost/market-place/api/v1
 components:
@@ -114,6 +140,7 @@ components:
         - model
         - description
         - price
+        - quantity
       properties:
         id:
           type: string
@@ -128,7 +155,21 @@ components:
         price:
           type: number
           minimum: 0.01
+        quantity:
+          type: integer
+          format: int32
     ProductListResponse:
       type: array
       items:
         $ref: "#/components/schemas/Product"
+    ProductLock:
+      type: object
+      required:
+        - idProduct
+        - quantity
+      properties:
+        idProduct:
+          type: string
+        quantity:
+          type: integer
+          format: int32
