@@ -2,8 +2,10 @@ package com.market.products.services.impl;
 
 import com.market.exceptions.custom.ResourceNotFoundException;
 import com.market.products.documents.ProductDocument;
+import com.market.products.documents.ProductLockDocument;
 import com.market.products.model.Product;
 import com.market.products.model.ProductLock;
+import com.market.products.repositories.ProductLockRepository;
 import com.market.products.repositories.ProductRepository;
 import com.market.products.services.ProductService;
 import org.junit.Before;
@@ -15,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,9 +30,12 @@ public class ProductServiceImplTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private ProductLockRepository productLockRepository;
+
     @Before
     public void setUp() {
-        this.productService = new ProductServiceImpl(this.productRepository);
+        this.productService = new ProductServiceImpl(this.productRepository, this.productLockRepository);
     }
 
     @Test
@@ -44,9 +48,7 @@ public class ProductServiceImplTest {
     @Test
     public void shouldFindByIdSellerAndReturnListOfProducts() {
         when(this.productRepository.findByIdSeller(anyString())).thenReturn(new ArrayList<>());
-        assertThrows(ResourceNotFoundException.class, () -> {
-            this.productService.findByIdSeller("test_id_seller");
-        });
+        assertThrows(ResourceNotFoundException.class, () -> this.productService.findByIdSeller("test_id_seller"));
     }
 
     @Test
@@ -67,30 +69,43 @@ public class ProductServiceImplTest {
         when(this.productRepository.countByIdGreaterThanEqual(anyString(), anyInt())).thenReturn(null);
         when(this.productRepository.save(any(ProductDocument.class))).thenReturn(null);
 
-        assertFalse(this.productService.lockForSelling(new ProductLock().idProduct("test_id_product").quantity(1)));
+        assertTrue(this.productService.lockForSelling(new ProductLock().idProduct("test_id_product").quantity(1)).isEmpty());
     }
 
     @Test
     public void shouldLockForSellingReturnTrueWhenQuantityAvailable() {
         when(this.productRepository.countByIdGreaterThanEqual(anyString(), anyInt())).thenReturn(this.buildTestProductDocument());
         when(this.productRepository.save(any(ProductDocument.class))).thenReturn(null);
+        when(this.productLockRepository.save(any(ProductLockDocument.class))).thenReturn(new ProductLockDocument());
 
-        assertTrue(this.productService.lockForSelling(new ProductLock().idProduct("test_id_product").quantity(1)));
+        assertFalse(this.productService.lockForSelling(new ProductLock().idProduct("test_id_product").quantity(1)).isEmpty());
     }
 
     @Test
     public void shouldSaveProductWithChangedQuantity() {
         when(this.productRepository.countByIdGreaterThanEqual(anyString(), anyInt())).thenReturn(this.buildTestProductDocument());
         when(this.productRepository.save(any(ProductDocument.class))).thenReturn(null);
+        when(this.productLockRepository.save(any(ProductLockDocument.class))).thenReturn(new ProductLockDocument());
 
         this.productService.lockForSelling(new ProductLock().idProduct("test_id_product").quantity(1));
         verify(this.productRepository, times(1)).save(any(ProductDocument.class));
     }
 
     @Test
+    public void shouldSaveProductLockDocument() {
+        when(this.productRepository.countByIdGreaterThanEqual(anyString(), anyInt())).thenReturn(this.buildTestProductDocument());
+        when(this.productRepository.save(any(ProductDocument.class))).thenReturn(null);
+        when(this.productLockRepository.save(any(ProductLockDocument.class))).thenReturn(new ProductLockDocument());
+
+        this.productService.lockForSelling(new ProductLock().idProduct("test_id_product").quantity(1));
+        verify(this.productLockRepository, times(1)).save(any(ProductLockDocument.class));
+    }
+
+    @Test
     public void shouldCallCountByIdGreaterThanEqual() {
         when(this.productRepository.countByIdGreaterThanEqual(anyString(), anyInt())).thenReturn(this.buildTestProductDocument());
         when(this.productRepository.save(any(ProductDocument.class))).thenReturn(null);
+        when(this.productLockRepository.save(any(ProductLockDocument.class))).thenReturn(new ProductLockDocument());
 
         this.productService.lockForSelling(new ProductLock().idProduct("test_id_product").quantity(1));
         verify(this.productRepository, times(1)).countByIdGreaterThanEqual(anyString(), anyInt());

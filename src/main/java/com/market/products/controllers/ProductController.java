@@ -5,6 +5,7 @@ import com.market.products.api.ProductsApi;
 import com.market.products.model.Product;
 import com.market.products.model.ProductListResponse;
 import com.market.products.model.ProductLock;
+import com.market.products.model.ProductUnlock;
 import com.market.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -50,9 +52,19 @@ public class ProductController extends BaseController implements ProductsApi {
 
     @Override
     public ResponseEntity lockProductQuantity(@Valid ProductLock productLock) {
-        if(this.productService.lockForSelling(productLock))
-            return new ResponseEntity<>(OK);
+        Optional<ProductLock> lockedProduct = this.productService.lockForSelling(productLock);
+
+        if(lockedProduct.isPresent())
+            return new ResponseEntity<>(lockedProduct.get(), OK);
         else
-            return new ResponseEntity<>(new ApiError(HttpStatus.BAD_REQUEST, "The quantity passed is larger than stock"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ApiError(BAD_REQUEST, "The quantity passed is larger than stock"), BAD_REQUEST);
+    }
+
+    @Override
+    public ResponseEntity unlockProductQuantity(@Valid ProductUnlock productUnlock) {
+        if(this.productService.unlockForSelling(productUnlock))
+            return new ResponseEntity(OK);
+        else
+            return new ResponseEntity(new ApiError(BAD_REQUEST, "Unable to find the locked product!"), BAD_REQUEST);
     }
 }

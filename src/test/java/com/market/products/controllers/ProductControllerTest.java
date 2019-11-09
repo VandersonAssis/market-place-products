@@ -19,6 +19,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -88,8 +89,8 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void shouldCallProductServiceLockForSellingMethodAndReturnHttpOk() throws Exception {
-        when(this.productService.lockForSelling(any(ProductLock.class))).thenReturn(true);
+    public void shouldCallProductControllerLockForSellingMethodAndReturnHttpOk() throws Exception {
+        when(this.productService.lockForSelling(any(ProductLock.class))).thenReturn(Optional.of(new ProductLock()));
 
         this.mockMvc.perform(post(this.apiPrefix + "/products/lock")
                 .contentType(APPLICATION_JSON)
@@ -98,10 +99,20 @@ public class ProductControllerTest {
     }
 
     @Test
+    public void shouldCallProductControllerLockForSellingMethodAndReturnHttpBadRequest() throws Exception {
+        when(this.productService.lockForSelling(any(ProductLock.class))).thenReturn(Optional.empty());
+
+        this.mockMvc.perform(post(this.apiPrefix + "/products/lock")
+                .contentType(APPLICATION_JSON)
+                .content(new Gson().toJson(new ProductLock().idProduct("test_id_product").quantity(1))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void shouldCheckAllProductLockRequiredFields() {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        ProductLock productLock = new ProductLock().idProduct("test_id_product").quantity(1);
-        Set<ConstraintViolation<ProductLock>> violations = validator.validate(productLock);
+        ProductLock productLockToggle = new ProductLock().idProduct("test_id_product").quantity(1);
+        Set<ConstraintViolation<ProductLock>> violations = validator.validate(productLockToggle);
         assertTrue(violations.isEmpty());
     }
 

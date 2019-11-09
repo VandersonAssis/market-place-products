@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "product")
+@Document(collection = "products")
 @CompoundIndex(name = "idSeller_model_name", def = "{'idSeller': 1, 'model': 1, 'name': 1}", unique = true)
 public class ProductDocument {
     @Id
@@ -34,6 +34,18 @@ public class ProductDocument {
     private LocalDateTime dateCreated;
     @LastModifiedDate
     private LocalDateTime lastModified;
+
+    public static ProductDocument build(Product product) {
+        return ProductDocument.builder()
+                .id(product.getId())
+                .idSeller(product.getIdSeller())
+                .model(product.getModel())
+                .name(product.getName())
+                .description(product.getDescription())
+                .price(product.getPrice())
+                .quantity(product.getQuantity())
+                .build();
+    }
 
     public Product convertToProduct() {
         return new Product()
