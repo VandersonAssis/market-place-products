@@ -22,6 +22,7 @@ public class ProductLockDocument {
     private String customerId;
     private String productId;
     private Integer quantity;
+    private OrderStatus orderStatus;
 
     @CreatedDate
     private LocalDateTime dateCreated;
@@ -31,12 +32,22 @@ public class ProductLockDocument {
                 .customerId("to_be_implemented")
                 .productId(productLock.getIdProduct())
                 .quantity(productLock.getQuantity())
+                .orderStatus(OrderStatus.valueOf(productLock.getOrderStatus().toString()))
                 .build();
     }
 
     public ProductLock convertToProductLock() {
         return new ProductLock()
+            .lockId(this.id)
             .idProduct(this.getProductId())
-            .quantity(this.getQuantity());
+            .quantity(this.getQuantity())
+            .orderStatus(ProductLock.OrderStatusEnum.valueOf(this.orderStatus.toString()));
+    }
+
+    private enum OrderStatus {
+        PENDING,
+        PROCESSING,
+        PAYMENT_NOT_AUTHORIZED,
+        FINISHED
     }
 }

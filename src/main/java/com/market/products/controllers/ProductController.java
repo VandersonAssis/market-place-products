@@ -1,14 +1,13 @@
 package com.market.products.controllers;
 
-import com.market.exceptions.exceptionhandlers.ApiError;
+import com.market.exceptions.custom.ResourceNotFoundException;
 import com.market.products.api.ProductsApi;
 import com.market.products.model.Product;
 import com.market.products.model.ProductListResponse;
 import com.market.products.model.ProductLock;
-import com.market.products.model.ProductUnlock;
+import com.market.products.services.ProductLockService;
 import com.market.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +21,9 @@ import static org.springframework.http.HttpStatus.*;
 public class ProductController extends BaseController implements ProductsApi {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductLockService productLockService;
 
     @Override
     public ResponseEntity<Product> saveProduct(@Valid Product product) {
@@ -51,20 +53,30 @@ public class ProductController extends BaseController implements ProductsApi {
     }
 
     @Override
-    public ResponseEntity lockProductQuantity(@Valid ProductLock productLock) {
-        Optional<ProductLock> lockedProduct = this.productService.lockForSelling(productLock);
+    public ResponseEntity<ProductLock> lockProductQuantity(@Valid ProductLock productLock) {
+        Optional<ProductLock> lockedProduct = this.productLockService.lockForSelling(productLock);
 
-        if(lockedProduct.isPresent())
-            return new ResponseEntity<>(lockedProduct.get(), OK);
-        else
-            return new ResponseEntity(new ApiError(BAD_REQUEST, "The quantity passed is larger than stock"), BAD_REQUEST);
+        return lockedProduct.map(lock -> new ResponseEntity<>(lock, OK))
+                .orElseGet(() -> new ResponseEntity<>(BAD_REQUEST));
     }
 
     @Override
-    public ResponseEntity unlockProductQuantity(@Valid ProductUnlock productUnlock) {
-        if(this.productService.unlockForSelling(productUnlock))
-            return new ResponseEntity(OK);
+    public ResponseEntity<ProductLock> getProductLock(String idLock) {
+        return this.productLockService.findById(idLock).map(lock -> new ResponseEntity<>(lock, OK))
+                .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Override
+    public ResponseEntity<Void> unlockProductQuantity(String lockId) {
+        if(this.productLockService.unlockForSelling(lockId))
+            return new ResponseEntity<>(OK);
         else
-            return new ResponseEntity(new ApiError(BAD_REQUEST, "Unable to find the locked product!"), BAD_REQUEST);
+            throw new ResourceNotFoundException();
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteLock(String lockId) {
+        this.productLockService.deleteById(lockId);
+        return new ResponseEntity<>(OK);
     }
 }

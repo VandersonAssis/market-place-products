@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  description: This is the market place's products service. This service handles any
+  description: This is the market place's products microservice. This microservice handles any
     actions related to products
   version: 1.0.0
   title: Market Place
@@ -105,7 +105,7 @@ paths:
   "/products/lock":
     post:
       tags:
-        - Products
+        - Products Lock Toggle
       summary: Locks the quantity of products sent in the payload
       description: If enough products for the quantity in the payload, they will be locked, so the order can go on. If the order fails, the locked products will be
         unlocked to be sold to another customer.
@@ -119,7 +119,11 @@ paths:
         required: true
       responses:
         "200":
-          description: The product's quantity has been locked and can be safely ordered.
+          description: The product's quantity has been locked and can be safely ordered. The lock id will be returned in the response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductLock"
         "400":
           description: This status code will be returned if the quantity passed is greater then the available or
             if the request is malformed. Either way, there will be a descriptive message and internal code to why the error
@@ -128,29 +132,72 @@ paths:
           description: The client is not authorized to access this endpoint
         "500":
           description: Something went wrong in the server side. The client can't do anything about it and should report the error to the system administrator.
+  "/products/{idLock}/lock":
+    parameters:
+      - in: path
+        name: idLock
+        required: true
+        description: The lock's id to return its lock
+        schema:
+          type: string
+    get:
+      tags:
+        - Products Lock Toggle
+      summary: Returns a lock
+      description: Returns a lock for the passed lock id. A product lock is a relation of product and quantity ordered by a customer
+      operationId: getProductLock
+      responses:
+        "200":
+          description: Lock response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductLock"
+        "400":
+          description: Malformed request
+        "401":
+          description: Authorization failed
+        "404":
+          description: Lock not found for the passed id
+        "500":
+          description: Internal server error
+        default:
+          description: Unexpected error
+    delete:
+      tags:
+        - Products Lock Toggle
+      summary: Deletes a product lock document
+      description: The product lock that contains the parameter id will be deleted
+      operationId: deleteLock
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Product lock not found
   "/products/unlock":
     post:
       tags:
-        - Products
+        - Products Lock Toggle
       summary: Unlocks the quantity of products sent in the payload
-      description: Unlocks the previously locked product quantity. This unlock endpoint is normally called when       the products has been locked for selling, but the customer's payment has not been authorized.
+      description: Unlocks the previously locked product quantity. This unlock endpoint is normally called when the products has been locked for selling, but the customer's payment has not been authorized.
       operationId: unlockProductQuantity
       requestBody:
         content:
-          application/json:
+          text/plain:
             schema:
-              $ref: "#/components/schemas/ProductUnlock"
-        description: The product lock toggle object containing the product id and quantity to be unlocked.
+              type: string
+              example: 5da654e8a4780523fbb
+        description: The lockId of the collection's document to be unlocked
         required: true
       responses:
         "200":
           description: The product's quantity has been unlocked succesfully and can be ordered again
         "400":
-          description: This status code will be returned if the quantity passed is greater then the available or
-            if the request is malformed. Either way, there will be a descriptive message and internal code to why the error
-            happened.
+          description: Malformed request
         "401":
           description: The client is not authorized to access this endpoint
+        "404":
+          description: The locked document for the provided id was not found
         "500":
           description: Something went wrong in the server side. The client can't do anything about it and should report the error to the system administrator.
 servers:
@@ -192,16 +239,21 @@ components:
       required:
         - idProduct
         - quantity
+        - orderStatus
       properties:
+        lockId:
+          type: string
         idProduct:
           type: string
         quantity:
           type: integer
           format: int32
-    ProductUnlock:
-      type: object
-      required:
-        - documentId
-      properties:
-        documentId:
+        orderStatus:
           type: string
+          enum:
+            - PENDING
+            - PROCESSING
+            - PAYMENT_NOT_AUTHORIZED
+            - FINISHED
+          default:
+            PENDING

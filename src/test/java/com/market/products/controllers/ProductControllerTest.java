@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.market.products.documents.ProductDocument;
 import com.market.products.model.Product;
 import com.market.products.model.ProductLock;
+import com.market.products.services.ProductLockService;
 import com.market.products.services.ProductService;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +40,9 @@ public class ProductControllerTest {
 
     @Mock
     private ProductService productService;
+
+    @Mock
+    private ProductLockService productLockService;
 
     @Mock
     private ProductDocument productDocument;
@@ -90,7 +94,7 @@ public class ProductControllerTest {
 
     @Test
     public void shouldCallProductControllerLockForSellingMethodAndReturnHttpOk() throws Exception {
-        when(this.productService.lockForSelling(any(ProductLock.class))).thenReturn(Optional.of(new ProductLock()));
+        when(this.productLockService.lockForSelling(any(ProductLock.class))).thenReturn(Optional.of(new ProductLock()));
 
         this.mockMvc.perform(post(this.apiPrefix + "/products/lock")
                 .contentType(APPLICATION_JSON)
@@ -100,7 +104,7 @@ public class ProductControllerTest {
 
     @Test
     public void shouldCallProductControllerLockForSellingMethodAndReturnHttpBadRequest() throws Exception {
-        when(this.productService.lockForSelling(any(ProductLock.class))).thenReturn(Optional.empty());
+        when(this.productLockService.lockForSelling(any(ProductLock.class))).thenReturn(Optional.empty());
 
         this.mockMvc.perform(post(this.apiPrefix + "/products/lock")
                 .contentType(APPLICATION_JSON)
