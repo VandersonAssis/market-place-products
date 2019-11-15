@@ -11,7 +11,7 @@
 
 	<groupId>com.market.products</groupId>
 	<artifactId>market-place-products</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>market-place-products</name>
 	<description>This project handles all products related actions in the market place system.</description>
 
