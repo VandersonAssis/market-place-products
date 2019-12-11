@@ -6,6 +6,7 @@ import com.market.products.model.Product;
 import com.market.products.repositories.ProductRepository;
 import com.market.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +17,16 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Value("${current.version}")
+    private String currentVersion;
+
     ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
+    }
+
+    @Override
+    public String findSystemCurrentVersion() {
+        return this.currentVersion;
     }
 
     @Override

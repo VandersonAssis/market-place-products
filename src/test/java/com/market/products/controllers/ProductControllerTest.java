@@ -1,6 +1,7 @@
 package com.market.products.controllers;
 
 import com.google.gson.Gson;
+import com.market.exceptions.exceptionhandlers.ExceptionHandlers;
 import com.market.products.documents.ProductDocument;
 import com.market.products.model.Product;
 import com.market.products.model.ProductLock;
@@ -23,12 +24,15 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.market.products.TestDataBuilder.buildTestProductDocument;
+import static com.market.products.TestDataBuilder.buildTestProductLockDocument;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -52,7 +56,9 @@ public class ProductControllerTest {
 
     @Before
     public void setUp() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(this.productController).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(this.productController)
+                .setControllerAdvice(new ExceptionHandlers())
+                .build();
         this.apiPrefix = "/marketplace/api/v1";
     }
 
@@ -66,7 +72,7 @@ public class ProductControllerTest {
 
     @Test
     public void shouldSaveProductReturnCreatedHttpStatusAndValidJsonBody() throws Exception {
-        ProductDocument testProductDocument = this.buildTestProductDocument();
+        ProductDocument testProductDocument = buildTestProductDocument();
         Product testProduct = testProductDocument.convertToProduct();
         String expectedJsonResponse = new Gson().toJson(testProductDocument.convertToProduct());
 
@@ -82,7 +88,7 @@ public class ProductControllerTest {
 
     @Test
     public void shouldUpdateProductReturnNoContentHttpStatusAndNoBody() throws Exception {
-        Product testProduct = this.buildTestProductDocument().convertToProduct();
+        Product testProduct = buildTestProductDocument().convertToProduct();
         when(this.productService.save(any(Product.class))).thenReturn(null);
 
         this.mockMvc.perform(put(this.apiPrefix + "/products")
@@ -130,6 +136,56 @@ public class ProductControllerTest {
     }
 
     @Test
+    public void shouldCallGetProductLockAndReturnHttpOkWithContent() throws Exception {
+        when(this.productLockService.findById(anyString()))
+                .thenReturn(Optional.of(buildTestProductLockDocument().convertToProductLock()));
+
+        this.mockMvc.perform(get(this.apiPrefix + "/products/test_id_product_lock/lock")
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
+    }
+
+    @Test
+    public void shouldCallGetProductLockAndReturnHttpNotFound() throws Exception {
+        when(this.productLockService.findById(anyString()))
+                .thenReturn(Optional.empty());
+
+        this.mockMvc.perform(get(this.apiPrefix + "/products/test_id_product_lock/lock")
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldCallUnlockProductQuantityAndReturnOkHttpStatus() throws Exception {
+        when(this.productLockService.unlockForSelling(anyString())).thenReturn(true);
+
+        this.mockMvc.perform(post(this.apiPrefix + "/products/unlock")
+                .contentType(TEXT_PLAIN)
+                .content("test_id_product_lock"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldCallUnlockProductQuantityAndReturnNotFoundHttpStatus() throws Exception {
+        when(this.productLockService.unlockForSelling(anyString())).thenReturn(false);
+
+        this.mockMvc.perform(post(this.apiPrefix + "/products/unlock")
+                .contentType(TEXT_PLAIN)
+                .content("test_id_product_lock"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldCallDeleteLockAndReturnOk() throws Exception {
+        doNothing().when(this.productLockService).deleteById(anyString());
+
+        this.mockMvc.perform(delete(this.apiPrefix + "/products/test_id_product_lock/lock")
+                .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void shouldCheckAllProductRequiredFields() {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Product product = new Product().idSeller("test_id").name("test_name").description("test_description")
@@ -137,16 +193,5 @@ public class ProductControllerTest {
                 .quantity(1);
         Set<ConstraintViolation<Product>> violations = validator.validate(product);
         assertTrue(violations.isEmpty());
-    }
-
-    private ProductDocument buildTestProductDocument() {
-        return ProductDocument.builder()
-                .idSeller("test_id_seller")
-                .model("test_model")
-                .name("test_name")
-                .description("test_description")
-                .price(new BigDecimal(10))
-                .quantity(1)
-                .build();
     }
 }

@@ -19,11 +19,6 @@ public class ProductLockServiceImpl implements ProductLockService {
     @Autowired
     private ProductRepository productRepository;
 
-    ProductLockServiceImpl(ProductLockRepository productLockRepository, ProductRepository productRepository) {
-        this.productLockRepository = productLockRepository;
-        this.productRepository = productRepository;
-    }
-
     @Override
     public Optional<ProductLock> lockForSelling(ProductLock productLock) {
         ProductDocument productDocument = this.productRepository.countByIdGreaterThanEqual(productLock.getIdProduct(), productLock.getQuantity());

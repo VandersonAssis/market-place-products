@@ -44,7 +44,7 @@ public class ProductLockDocument {
             .orderStatus(ProductLock.OrderStatusEnum.valueOf(this.orderStatus.toString()));
     }
 
-    private enum OrderStatus {
+    public enum OrderStatus {
         PENDING,
         PROCESSING,
         PAYMENT_NOT_AUTHORIZED,

@@ -3,15 +3,14 @@ package com.market.products.documents;
 import com.market.products.model.Product;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-
+import static com.market.products.TestDataBuilder.buildTestProductDocument;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ProductDocumentTest {
 
     @Test
     public void shouldConvertToValidProduct() {
-        ProductDocument testProductDocument = this.buildTestProductDocument();
+        ProductDocument testProductDocument = buildTestProductDocument();
         Product testProduct = testProductDocument.convertToProduct();
 
         assertNotNull(testProduct.getId());
@@ -20,16 +19,5 @@ public class ProductDocumentTest {
         assertNotNull(testProduct.getName());
         assertNotNull(testProduct.getDescription());
         assertNotNull(testProduct.getPrice());
-    }
-
-    private ProductDocument buildTestProductDocument() {
-        return ProductDocument.builder()
-                .id("test_id")
-                .idSeller("test_id_seller")
-                .model("test_model")
-                .name("test_name")
-                .description("test_description")
-                .price(new BigDecimal(10))
-                .build();
     }
 }

@@ -3,7 +3,7 @@ info:
   description: This is the market place's products microservice. This microservice handles any
     actions related to products
   version: 1.0.0
-  title: Market Place
+  title: Market Place Products
   contact:
     name: Vanderson Assis
     email: assis.vanderson@gmail.com
@@ -23,8 +23,8 @@ paths:
         description: Product object that will be added to our database
         required: true
       responses:
-        "200":
-          description: Products response
+        "201":
+          description: The product just created
           content:
             application/json:
               schema:
@@ -33,6 +33,8 @@ paths:
           description: Invalid data object
         "405":
           description: Validation exception
+        "500":
+          description: Internal server error
     put:
       tags:
         - Products
@@ -47,12 +49,12 @@ paths:
         description: Product object that will be updated in our database
         required: true
       responses:
-        "400":
-          description: Invalid ID supplied
         "404":
           description: Product not found
         "405":
           description: Validation exception
+        "500":
+          description: Internal server error
   "/products/{idProduct}":
     delete:
       tags:
@@ -68,12 +70,12 @@ paths:
           schema:
             type: string
       responses:
-        "400":
-          description: Invalid ID supplied
+        "204":
+          description: The product has been deleted
         "404":
           description: Product not found
-        "405":
-          description: Validation exception
+        "500":
+          description: Internal server error
   "/products/{idSeller}/seller":
     get:
       tags:
@@ -153,8 +155,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProductLock"
-        "400":
-          description: Malformed request
         "401":
           description: Authorization failed
         "404":
@@ -200,6 +200,20 @@ paths:
           description: The locked document for the provided id was not found
         "500":
           description: Something went wrong in the server side. The client can't do anything about it and should report the error to the system administrator.
+  "/products/current-version":
+    get:
+      tags:
+        - Config Server
+      summary: Returns the version test property
+      description: This is just a test endpoint that return a property fetched from the config server.
+      operationId: getCurrentVersion
+      responses:
+        "200":
+          description: Current version is returne
+        "401":
+          description: Authorization failed
+        "500":
+          description: Internal server error
 servers:
   - url: http://localhost/market-place/api/v1
 components:

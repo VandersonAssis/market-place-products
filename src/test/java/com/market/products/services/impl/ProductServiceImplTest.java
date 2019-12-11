@@ -11,10 +11,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.market.products.TestDataBuilder.buildTestProductDocument;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +35,7 @@ public class ProductServiceImplTest {
 
     @Test
     public void shouldCheckIfSaveReturnProductDocument() {
-        when(this.productRepository.save(any(ProductDocument.class))).thenReturn(this.buildTestProductDocument());
+        when(this.productRepository.save(any(ProductDocument.class))).thenReturn(buildTestProductDocument());
         ProductDocument savedDocument = this.productService.save(new Product());
         assertNotNull(savedDocument);
     }
@@ -57,17 +57,5 @@ public class ProductServiceImplTest {
     public void shouldCheckIfFinByIdSellerReturnsProductsList() {
         when(this.productRepository.findByIdSeller(anyString())).thenReturn(Arrays.asList(new ProductDocument(), new ProductDocument()));
         assertNotNull(this.productService.findByIdSeller("test_id_seller"));
-    }
-
-    private ProductDocument buildTestProductDocument() {
-        return ProductDocument.builder()
-                .id("test_id")
-                .idSeller("test_id_seller")
-                .model("test_model")
-                .name("test_name")
-                .description("test_description")
-                .price(new BigDecimal(10))
-                .quantity(1)
-                .build();
     }
 }

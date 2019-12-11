@@ -8,6 +8,7 @@ import com.market.products.model.ProductLock;
 import com.market.products.services.ProductLockService;
 import com.market.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
