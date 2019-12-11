@@ -7,6 +7,7 @@ import com.market.products.model.ProductListResponse;
 import com.market.products.model.ProductLock;
 import com.market.products.services.ProductLockService;
 import com.market.products.services.ProductService;
+import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -79,5 +80,10 @@ public class ProductController extends BaseController implements ProductsApi {
     public ResponseEntity<Void> deleteLock(String lockId) {
         this.productLockService.deleteById(lockId);
         return new ResponseEntity<>(OK);
+    }
+
+    @Override
+    public ResponseEntity<String> getCurrentVersion() {
+        return new ResponseEntity<>(this.productService.findSystemCurrentVersion(), OK);
     }
 }

@@ -210,6 +210,11 @@ paths:
       responses:
         "200":
           description: Current version is returne
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 1.1.8
         "401":
           description: Authorization failed
         "500":
