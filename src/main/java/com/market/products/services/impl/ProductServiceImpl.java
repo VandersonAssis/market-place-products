@@ -7,12 +7,14 @@ import com.market.products.repositories.ProductRepository;
 import com.market.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RefreshScope
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
