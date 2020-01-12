@@ -1,15 +1,15 @@
 package com.market.products.controllers;
 
-import com.market.exceptions.custom.ResourceNotFoundException;
+import com.market.exceptions.custom.BaseHttpException;
+import com.market.exceptions.exceptionhandlers.ApiError;
 import com.market.products.api.ProductsApi;
 import com.market.products.model.Product;
 import com.market.products.model.ProductListResponse;
 import com.market.products.model.ProductLock;
 import com.market.products.services.ProductLockService;
 import com.market.products.services.ProductService;
-import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -65,7 +65,7 @@ public class ProductController extends BaseController implements ProductsApi {
     @Override
     public ResponseEntity<ProductLock> getProductLock(String idLock) {
         return this.productLockService.findById(idLock).map(lock -> new ResponseEntity<>(lock, OK))
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new BaseHttpException(new ApiError(NOT_FOUND, "Product Lock not found")));
     }
 
     @Override

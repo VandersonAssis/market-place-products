@@ -276,3 +276,10 @@ components:
             - FINISHED
           default:
             PENDING
+    Seller:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string

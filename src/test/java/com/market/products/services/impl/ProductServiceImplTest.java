@@ -1,6 +1,6 @@
 package com.market.products.services.impl;
 
-import com.market.exceptions.custom.ResourceNotFoundException;
+import com.market.exceptions.custom.BaseHttpException;
 import com.market.products.documents.ProductDocument;
 import com.market.products.model.Product;
 import com.market.products.repositories.ProductRepository;
@@ -42,8 +42,9 @@ public class ProductServiceImplTest {
 
     @Test
     public void shouldFindByIdSellerAndReturnListOfProducts() {
+        //TODO Find a way to check which http error is wrapped inside bellow baseHttpException
         when(this.productRepository.findByIdSeller(anyString())).thenReturn(new ArrayList<>());
-        assertThrows(ResourceNotFoundException.class, () -> this.productService.findByIdSeller("test_id_seller"));
+        assertThrows(BaseHttpException.class, () -> this.productService.findByIdSeller("test_id_seller"));
     }
 
     @Test
