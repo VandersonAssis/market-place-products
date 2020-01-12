@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "${sellers.spring.application.name}")
+@FeignClient(name = "${api-gateway.application.name}")
 @RibbonClient(name = "${sellers.spring.application.name}")
 public interface SellersApiProxy {
-    @GetMapping("/marketplace/api/v1/sellers/{idSeller}")
+    @GetMapping("/${sellers.spring.application.name}/marketplace/api/v1/sellers/{idSeller}")
     ResponseEntity<Seller> findById(@PathVariable("idSeller") String idSeller);
 }
