@@ -1,8 +1,8 @@
 package com.market.products.controllers;
 
 import com.google.gson.Gson;
-import com.market.exceptions.exceptionhandlers.ExceptionHandlers;
 import com.market.products.documents.ProductDocument;
+import com.market.products.exceptions.exceptionhandlers.ExceptionHandlers;
 import com.market.products.model.Product;
 import com.market.products.model.ProductLock;
 import com.market.products.services.ProductLockService;

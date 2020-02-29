@@ -8,6 +8,7 @@ import java.util.List;
 public interface ProductService {
     String findSystemCurrentVersion();
     ProductDocument save(Product product);
+    ProductDocument edit(Product product);
     List<Product> findByIdSeller(String idSeller);
     void delete(String productId);
 }

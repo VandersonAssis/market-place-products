@@ -1,7 +1,7 @@
 package com.market.products.services.impl;
-import com.market.exceptions.custom.BaseHttpException;
-import com.market.exceptions.exceptionhandlers.ApiError;
 import com.market.products.documents.ProductDocument;
+import com.market.products.exceptions.custom.BaseHttpException;
+import com.market.products.exceptions.exceptionhandlers.ApiError;
 import com.market.products.integration.sellers.services.SellersService;
 import com.market.products.model.Product;
 import com.market.products.repositories.ProductRepository;
@@ -13,9 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RefreshScope
@@ -47,13 +49,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductDocument edit(Product product) {
+        if(this.productRepository.findById(product.getId()).isEmpty())
+            throw new BaseHttpException(new ApiError(NOT_FOUND, "Product not found!"));
+
+        return this.save(product);
+    }
+
+    @Override
     public List<Product> findByIdSeller(String idSeller) {
         List<ProductDocument> sellerProducts = this.productRepository.findByIdSeller(idSeller);
 
         if(!sellerProducts.isEmpty())
             return sellerProducts.stream().map(ProductDocument::convertToProduct).collect(Collectors.toList());
         else
-            throw new BaseHttpException(new ApiError(HttpStatus.NOT_FOUND, "Seller not found"));
+            throw new BaseHttpException(new ApiError(NOT_FOUND, "Seller not found"));
     }
 
     @Override

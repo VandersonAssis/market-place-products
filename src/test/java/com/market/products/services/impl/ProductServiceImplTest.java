@@ -1,7 +1,7 @@
 package com.market.products.services.impl;
 
-import com.market.exceptions.custom.BaseHttpException;
 import com.market.products.documents.ProductDocument;
+import com.market.products.exceptions.custom.BaseHttpException;
 import com.market.products.model.Product;
 import com.market.products.repositories.ProductRepository;
 import com.market.products.services.ProductService;
