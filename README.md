@@ -58,11 +58,21 @@ located in the src/main/resources folder of each project. All you have to do is 
 
 https://github.com/VandersonAssis/market-place-docker-compose
 
+https://github.com/VandersonAssis/market-place-api-gateway
+
+https://github.com/VandersonAssis/market-palce-integration-tests
+
 https://github.com/VandersonAssis/market-place-products
+
+https://github.com/VandersonAssis/market-place-sellers
 
 https://github.com/VandersonAssis/market-place-purchase
 
 https://github.com/VandersonAssis/market-place-orderprocessor
+
+https://github.com/VandersonAssis/market-place-configserver
+
+https://github.com/VandersonAssis/market-place-exception-handlers
 
 #### Disclaimer
 This and any other piece of code belonging to the Market Place project is 
