@@ -23,34 +23,31 @@ This project interfaces all products related actions.
 - Gson
 - Maven
 
-### Deploy (docker compose is outdated, please don't try to deploy the system just yet)
-To deploy this project please follow bellow steps.
-- 1 Have Docker configured in your computer.
-- 2 Clone this repository https://github.com/VandersonAssis/market-place-docker-compose
-- 3 Navigate into this project using your preferred command line tool (which can run Docker commands)
-- 4 Run the `docker-compose up` command
+### Deploy
+...the dockerfile I have is already outdated based on the current state of the system. 
+As soon as I have created a new version, I'm going to make it available here...
 
 ### Info
-The Market Place project is composed by three microservices, a 
- docker-compose project and in the 
-future a react frontend. The microservices are market-place-products, 
-market-place-purchase and market-place-orderprocessor. Bellow are the 
-links to their repositories.
+The Market Place project is composed by five microservices that are:
+market-place-api-gateway, market-place-products, market-place-purchase, market-place-orderprocessor 
+and market-place-sellers.
+
+It's also composed by four other containers that are:
+market-place-config-server, market-place-docker-compose, market-place-exception-handler and 
+market-place-eureka. 
+ 
+In the near future it will have a react frontend spa. Further down are the links to their repositories.
+
+Also, please find bellow the system's diagram. It will help further on how things 
+happens "behind the curtains".  
 
 ### How to
-Everything starts in the product microservice, where in order to be 
-sold, they have to be registered in our mongodb database. After 
-registered, the purchase microservices comes in. 
-
-When a call is made to marketplace/api/v1/purchase/start endpoint with 
-a correct payload, the order process will start, which will make use 
-of rest microservices integration and multiple rabbitmq queues. 
-In there's a flux diagram illustrating this in the  
-market-place-docker-compose project.
+REWRITE THIS
 
 <b>For more info</b> on the available endpoints, expected payloads, 
 responses and so on, please refer to the swagger "openapi.yaml" file 
-located in the src/main/resources folder of each project.
+located in the src/main/resources folder of each project. All you have to do is paste their content into 
+`https://editor.swagger.io/`.
 
 https://github.com/VandersonAssis/market-place-docker-compose
 
@@ -63,9 +60,10 @@ https://github.com/VandersonAssis/market-place-orderprocessor
 #### Disclaimer
 This and any other piece of code belonging to the Market Place project is 
 being created with intention to show interviewers my abilities creating 
-a system using microservices architecture. 
-
-This system still under development, instructions on how to deploy it will be available as soon as I have made the steps. 
+a system using microservices architecture.  
 
 Also, please have in mind that 
 I work in this project only on my free time, therefore improvements can take a little while to be made.
+
+### Diagram
+![alt text](https://raw.githubusercontent.com/VandersonAssis/market-place-support-files/master/diagrams/system-diagram.png)
