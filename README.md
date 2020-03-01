@@ -42,7 +42,14 @@ Also, please find bellow the system's diagram. It will help further on how thing
 happens "behind the curtains".  
 
 ### How to
-REWRITE THIS
+Everything starts on the sellers api, where a seller has to be registered through the 
+`/market-place-sellers/marketplace/api/v1/sellers` endpoint. After a seller has been registered then we can 
+register any number of products to that seller through the 
+`/market-place-products/marketplace/api/v1/products` endpoint. After the products has been registered, then 
+we can start selling them right away through the `/market-place-purchase/marketplace/api/v1/purchase/start`.
+
+Again, for more info on what happens on the backend part when we're calling those endpoints, please refer 
+to the diagram bellow and also all the documentations provided on the openapi.yaml file referenced bellow. 
 
 <b>For more info</b> on the available endpoints, expected payloads, 
 responses and so on, please refer to the swagger "openapi.yaml" file 
