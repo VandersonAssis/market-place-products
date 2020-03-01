@@ -44,15 +44,15 @@ happens "behind the curtains".
 ### How to
 Everything starts on the sellers api, where a seller has to be registered through the 
 `/market-place-sellers/marketplace/api/v1/sellers` endpoint. After a seller has been registered then we can 
-register any number of products to that seller through the 
+register any number of products for that seller through the 
 `/market-place-products/marketplace/api/v1/products` endpoint. After the products has been registered, then 
 we can start selling them right away through the `/market-place-purchase/marketplace/api/v1/purchase/start`.
 
 Again, for more info on what happens on the backend part when we're calling those endpoints, please refer 
-to the diagram bellow and also all the documentations provided on the openapi.yaml file referenced bellow. 
+to the diagram bellow and also all the documentations provided on the openapi.yaml files referenced bellow. 
 
 <b>For more info</b> on the available endpoints, expected payloads, 
-responses and so on, please refer to the swagger "openapi.yaml" file 
+responses and so on, please refer to the swagger "openapi.yaml" file
 located in the src/main/resources folder of each project. All you have to do is paste their content into 
 `https://editor.swagger.io/`.
 
@@ -80,7 +80,7 @@ being created with intention to show interviewers my abilities creating
 a system using microservices architecture.  
 
 Also, please have in mind that 
-I work in this project only on my free time, therefore improvements can take a little while to be made.
+I work on this project only on my free time, therefore, improvements can take a little while to be made.
 
 ### Diagram
 ![alt text](https://raw.githubusercontent.com/VandersonAssis/market-place-support-files/master/diagrams/system-diagram.png)
