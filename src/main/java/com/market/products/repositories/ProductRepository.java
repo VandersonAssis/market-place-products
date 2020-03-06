@@ -12,4 +12,5 @@ public interface ProductRepository extends MongoRepository<ProductDocument, Stri
     @Query("{ 'id': '?0', 'quantity': { $gte: ?1 } }")
     ProductDocument countByIdGreaterThanEqual(String id, int quantity);
     List<ProductDocument> findByIdSeller(String idSeller);
+    void deleteByIdSeller(String sellerId);
 }

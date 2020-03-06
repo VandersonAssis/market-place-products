@@ -104,6 +104,26 @@ paths:
           description: Internal server error
         default:
           description: Unexpected error
+    delete:
+      tags:
+        - Products
+      summary: Deletes all the seller's products
+      description: All the products belonging to the seller passed as parameter
+      operationId: deleteProducts
+      parameters:
+        - in: path
+          name: idSeller
+          required: true
+          description: Seller's id which will have all its products deleted
+          schema:
+            type: string
+      responses:
+        "204":
+          description: All the products belonging to this seller was deleted successfully
+        "404":
+          description: Seller not found
+        "500":
+          description: Internal server error
   "/products/lock":
     post:
       tags:
@@ -200,25 +220,6 @@ paths:
           description: The locked document for the provided id was not found
         "500":
           description: Something went wrong in the server side. The client can't do anything about it and should report the error to the system administrator.
-  "/products/current-version":
-    get:
-      tags:
-        - Config Server
-      summary: Returns the version test property
-      description: This is just a test endpoint that return a property fetched from the config server.
-      operationId: getCurrentVersion
-      responses:
-        "200":
-          description: Current version is returne
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: 1.1.8
-        "401":
-          description: Authorization failed
-        "500":
-          description: Internal server error
 servers:
   - url: http://localhost/market-place/api/v1
 components:

@@ -31,7 +31,9 @@
 
 		<sonar.coverage.exclusions>
 			**/MarketPlaceProductsApplication.java,
-			**/documents/**/*
+			**/documents/**/*,
+			**/exceptions/**/*,
+			**/config/**/*
 		</sonar.coverage.exclusions>
 	</properties>
 

@@ -82,11 +82,12 @@ public class ProductController extends BaseController implements ProductsApi {
     @Override
     public ResponseEntity<Void> deleteLock(String lockId) {
         this.productLockService.deleteById(lockId);
-        return new ResponseEntity<>(OK);
+        return new ResponseEntity<>(NO_CONTENT);
     }
 
     @Override
-    public ResponseEntity<String> getCurrentVersion() {
-        return new ResponseEntity<>(this.productService.findSystemCurrentVersion(), OK);
+    public ResponseEntity<Void> deleteProducts(String idSeller) {
+        this.productService.deleteProducts(idSeller);
+        return new ResponseEntity<>(NO_CONTENT);
     }
 }
