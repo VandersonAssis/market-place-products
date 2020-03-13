@@ -8,10 +8,11 @@ import com.market.products.model.ProductListResponse;
 import com.market.products.model.ProductLock;
 import com.market.products.services.ProductLockService;
 import com.market.products.services.ProductService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,8 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 public class ProductController extends BaseController implements ProductsApi {
+    private static final Logger log = LogManager.getLogger(ProductController.class);
+
     @Autowired
     private ProductService productService;
 
@@ -41,10 +44,13 @@ public class ProductController extends BaseController implements ProductsApi {
 
     @Override
     public ResponseEntity<ProductListResponse> listProductsBySeller(String idSeller) {
+        log.info("{} begin", idSeller);
+
         List<Product> products = this.productService.findByIdSeller(idSeller);
         ProductListResponse productListResponse = new ProductListResponse();
         productListResponse.addAll(products);
 
+        log.info("{} returning ok with data", idSeller);
         return new ResponseEntity<>(productListResponse, OK);
     }
 
