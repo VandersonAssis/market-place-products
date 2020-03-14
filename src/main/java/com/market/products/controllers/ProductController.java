@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -31,69 +32,92 @@ public class ProductController extends BaseController implements ProductsApi {
 
     @Override
     public ResponseEntity<Product> saveProduct(@Valid Product product) {
+        log.info("name {} begin", product.getName());
         product.setId(null);
         Product savedProduct = this.productService.save(product).convertToProduct();
+        log.info("id {} product saved", product.getId());
         return new ResponseEntity<>(savedProduct, CREATED);
     }
 
     @Override
     public ResponseEntity<Void> updateProduct(@Valid Product product) {
+        log.info("name {} begin", product.getName());
         this.productService.edit(product);
+        log.info("id {} product updated", product.getId());
         return new ResponseEntity<>(NO_CONTENT);
     }
 
     @Override
     public ResponseEntity<ProductListResponse> listProductsBySeller(String idSeller) {
-        log.info("{} begin", idSeller);
+        log.info("id {} begin", idSeller);
 
         List<Product> products = this.productService.findByIdSeller(idSeller);
         ProductListResponse productListResponse = new ProductListResponse();
         productListResponse.addAll(products);
 
-        log.info("{} returning ok with data", idSeller);
+        log.info("id {} returning ok with data", idSeller);
         return new ResponseEntity<>(productListResponse, OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteProduct(String idProduct) {
+        log.info("id {} begin", idProduct);
         this.productService.delete(idProduct);
+        log.info("id {} product deleted", idProduct);
         return new ResponseEntity<>(NO_CONTENT);
     }
 
     @Override
     public ResponseEntity<ProductLock> lockProductQuantity(@Valid ProductLock productLock) {
-        if(productLock.getQuantity() <= 0)
+        log.info("id {} and quantity {} begin", productLock.getIdProduct(), productLock.getQuantity());
+
+        if(productLock.getQuantity() <= 0) {
+            log.error("Lock quantity of {} is invalid. Returning bad request response", productLock.getQuantity());
             throw new BaseHttpException(new ApiError(BAD_REQUEST, "Invalid lock quantity."));
+        }
 
         Optional<ProductLock> lockedProduct = this.productLockService.lockForSelling(productLock);
 
+        log.info("Handling product lock return");
         return lockedProduct.map(lock -> new ResponseEntity<>(lock, OK))
-                .orElseGet(() -> new ResponseEntity<>(BAD_REQUEST));
+                .orElseThrow(() -> new BaseHttpException(new ApiError(BAD_REQUEST, "Couldn't lock product {}", productLock.getIdProduct())));
     }
 
     @Override
     public ResponseEntity<ProductLock> getProductLock(String idLock) {
+        log.info("id {} begin", idLock);
+
         return this.productLockService.findById(idLock).map(lock -> new ResponseEntity<>(lock, OK))
                 .orElseThrow(() -> new BaseHttpException(new ApiError(NOT_FOUND, "Product Lock not found")));
     }
 
     @Override
     public ResponseEntity<Void> unlockProductQuantity(String lockId) {
-        if(this.productLockService.unlockForSelling(lockId))
+        log.info("id {} begin", lockId);
+
+        if(this.productLockService.unlockForSelling(lockId)) {
+            log.info("id {} unlocked", lockId);
             return new ResponseEntity<>(OK);
-        else
+        }
+        else {
+            log.error("Unable to unlock id {}, returning not found", lockId);
             throw new BaseHttpException(new ApiError(NOT_FOUND, "Lock not found"));
+        }
     }
 
     @Override
     public ResponseEntity<Void> deleteLock(String lockId) {
+        log.info("id {} begin", lockId);
         this.productLockService.deleteById(lockId);
+        log.info("id {} deleted", lockId);
         return new ResponseEntity<>(NO_CONTENT);
     }
 
     @Override
     public ResponseEntity<Void> deleteProducts(String idSeller) {
+        log.info("idSeller {} begin", idSeller);
         this.productService.deleteProducts(idSeller);
+        log.info("idSeller {} deleted", idSeller);
         return new ResponseEntity<>(NO_CONTENT);
     }
 }

@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 @RefreshScope
 public class ProductServiceImpl implements ProductService {
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger(ProductServiceImpl.class);
 
     @Autowired
     private ProductRepository productRepository;
@@ -32,17 +32,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDocument save(Product product) {
-        if(this.sellersService.findById(product.getIdSeller()).isEmpty())
+        log.info("{} begin", product.getName());
+        if(this.sellersService.findById(product.getIdSeller()).isEmpty()) {
+            log.error("{} seller not found!", product.getIdSeller());
             throw new BaseHttpException(new ApiError(BAD_REQUEST, "Product's seller not found"));
+        }
 
+        log.info("{} saved", product.getName());
         return this.productRepository.save(ProductDocument.build(product));
     }
 
     @Override
     public ProductDocument edit(Product product) {
-        if(this.productRepository.findById(product.getId()).isEmpty())
+        log.info("{} productId and {} productName begin", product.getId(), product.getName());
+        if(this.productRepository.findById(product.getId()).isEmpty()) {
+            log.error("{} product not found!", product.getId());
             throw new BaseHttpException(new ApiError(NOT_FOUND, "Product not found!"));
+        }
 
+        log.info("{} product edited successfully", product.getId());
         return this.productRepository.save(ProductDocument.build(product));
     }
 
@@ -53,22 +61,24 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDocument> sellerProducts = this.productRepository.findByIdSeller(idSeller);
 
         if(!sellerProducts.isEmpty()) {
-            log.info("Seller {} found", idSeller);
+            log.info("{} found", idSeller);
             return sellerProducts.stream().map(ProductDocument::convertToProduct).collect(Collectors.toList());
         }
         else {
-            log.info(String.format("Seller %s not found", idSeller));
+            log.info("{} not found!", idSeller);
             throw new BaseHttpException(new ApiError(NOT_FOUND, "Seller not found"));
         }
     }
 
     @Override
     public void delete(String productId) {
+        log.info("{} productId", productId);
         this.productRepository.deleteById(productId);
     }
 
     @Override
     public void deleteProducts(String sellerId) {
+        log.info("All products for {} sellerId", sellerId);
         this.sellersService.findById(sellerId).ifPresentOrElse(s -> this.productRepository.deleteByIdSeller(s.getId()),
                 () -> {throw new BaseHttpException(new ApiError(NOT_FOUND, "Seller not found"));});
     }
