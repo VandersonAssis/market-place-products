@@ -35,7 +35,7 @@ public class ProductController extends BaseController implements ProductsApi {
         log.info("name {} begin", product.getName());
         product.setId(null);
         Product savedProduct = this.productService.save(product).convertToProduct();
-        log.info("id {} product saved", product.getId());
+        log.info("id {} product saved", savedProduct.getId());
         return new ResponseEntity<>(savedProduct, CREATED);
     }
 
