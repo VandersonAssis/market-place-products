@@ -33,13 +33,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDocument save(Product product) {
         log.info("{} begin", product.getName());
-        if(this.sellersService.findById(product.getIdSeller()).isEmpty()) {
-            log.error("{} seller not found!", product.getIdSeller());
-            throw new BaseHttpException(new ApiError(BAD_REQUEST, "Product's seller not found"));
-        }
+        this.sellersService.findById(product.getIdSeller()).orElseThrow(() -> new BaseHttpException(new ApiError(BAD_REQUEST, "Product's seller not found")));
 
-        log.info("{} saved", product.getName());
-        return this.productRepository.save(ProductDocument.build(product));
+        ProductDocument productSaved = this.productRepository.save(ProductDocument.build(product));
+        log.info("{} saved", productSaved.getId());
+        return productSaved;
     }
 
     @Override
