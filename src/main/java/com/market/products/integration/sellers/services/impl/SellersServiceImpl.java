@@ -9,9 +9,11 @@ import feign.FeignException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -20,6 +22,9 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 public class SellersServiceImpl implements SellersService {
     private static final Logger log = LogManager.getLogger(SellersServiceImpl.class);
+
+    @Autowired
+    private MessageSource msg;
 
     @Autowired
     private SellersApiProxy sellersApiProxy;
@@ -38,7 +43,7 @@ public class SellersServiceImpl implements SellersService {
                 return Optional.empty();
             } else {
                 log.error("Error while trying to find {} seller", sellerId, ex);
-                throw new BaseHttpException(new ApiError(INTERNAL_SERVER_ERROR, "Error in SellersServiceImpl.findById"));
+                throw new BaseHttpException(new ApiError(INTERNAL_SERVER_ERROR, this.msg.getMessage("internal.server.error", null, Locale.getDefault())));
             }
         }
     }

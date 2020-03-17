@@ -11,11 +11,13 @@ import com.market.products.services.ProductService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
@@ -23,6 +25,9 @@ import static org.springframework.http.HttpStatus.*;
 @RestController
 public class ProductController extends BaseController implements ProductsApi {
     private static final Logger log = LogManager.getLogger(ProductController.class);
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     private ProductService productService;
@@ -73,14 +78,14 @@ public class ProductController extends BaseController implements ProductsApi {
 
         if(productLock.getQuantity() <= 0) {
             log.error("Lock quantity of {} is invalid. Returning bad request response", productLock.getQuantity());
-            throw new BaseHttpException(new ApiError(BAD_REQUEST, "Invalid lock quantity."));
+            throw new BaseHttpException(new ApiError(BAD_REQUEST, this.messageSource.getMessage("invalid.lock.quantity", null, Locale.getDefault())));
         }
 
         Optional<ProductLock> lockedProduct = this.productLockService.lockForSelling(productLock);
-
         log.info("Handling product lock return");
         return lockedProduct.map(lock -> new ResponseEntity<>(lock, OK))
-                .orElseThrow(() -> new BaseHttpException(new ApiError(BAD_REQUEST, "Couldn't lock product {}", productLock.getIdProduct())));
+                .orElseThrow(() -> new BaseHttpException(new ApiError(BAD_REQUEST, this.messageSource.getMessage("couldnt.lock.product",
+                        new Object[] {productLock.getIdProduct()}, Locale.getDefault()))));
     }
 
     @Override
@@ -88,7 +93,7 @@ public class ProductController extends BaseController implements ProductsApi {
         log.info("id {} begin", idLock);
 
         return this.productLockService.findById(idLock).map(lock -> new ResponseEntity<>(lock, OK))
-                .orElseThrow(() -> new BaseHttpException(new ApiError(NOT_FOUND, "Product Lock not found")));
+                .orElseThrow(() -> new BaseHttpException(new ApiError(NOT_FOUND, this.messageSource.getMessage("product.lock.not.found", null, Locale.getDefault()))));
     }
 
     @Override
@@ -101,7 +106,7 @@ public class ProductController extends BaseController implements ProductsApi {
         }
         else {
             log.error("Unable to unlock id {}, returning not found", lockId);
-            throw new BaseHttpException(new ApiError(NOT_FOUND, "Lock not found"));
+            throw new BaseHttpException(new ApiError(NOT_FOUND, this.messageSource.getMessage("product.lock.not.found", null, Locale.getDefault())));
         }
     }
 
