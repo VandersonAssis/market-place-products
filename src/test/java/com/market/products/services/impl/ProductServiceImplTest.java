@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.springframework.context.MessageSource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -35,6 +36,9 @@ public class ProductServiceImplTest {
     private ProductRepository productRepository;
 
     @Mock
+    private MessageSource msg;
+
+    @Mock
     private SellersService sellersService;
 
     @Rule
@@ -45,6 +49,9 @@ public class ProductServiceImplTest {
         this.productService = new ProductServiceImpl();
         ReflectionTestUtils.setField(this.productService, "productRepository", this.productRepository);
         ReflectionTestUtils.setField(this.productService, "sellersService", this.sellersService);
+        ReflectionTestUtils.setField(this.productService, "msg", this.msg);
+
+        when(this.msg.getMessage(anyString(), any(), any())).thenReturn("Test error message");
     }
 
     @Test

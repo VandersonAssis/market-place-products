@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.context.MessageSource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -53,6 +54,9 @@ public class ProductControllerTest {
     @Mock
     private ProductDocument productDocument;
 
+    @Mock
+    private MessageSource msg;
+
     private MockMvc mockMvc;
     private String apiPrefix;
 
@@ -62,6 +66,8 @@ public class ProductControllerTest {
                 .setControllerAdvice(new ExceptionHandlers())
                 .build();
         this.apiPrefix = "/marketplace/api/v1";
+
+        when(this.msg.getMessage(anyString(), any(), any())).thenReturn("Test error message");
     }
 
     @Test

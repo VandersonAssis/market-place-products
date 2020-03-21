@@ -6,10 +6,12 @@ import com.market.products.integration.sellers.services.SellersService;
 import com.market.products.model.Seller;
 import feign.FeignException;
 import feign.Request;
+import org.aspectj.util.Reflection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -22,6 +24,7 @@ import java.util.Optional;
 
 import static com.market.products.TestDataBuilder.buildTestSeller;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
@@ -32,12 +35,17 @@ public class SellersServiceImplTest {
     @Mock
     private SellersApiProxy sellersApiProxy;
 
+    @Mock
+    private MessageSource msg;
+
     private SellersService sellersService;
 
     @Before
     public void setUp() {
         this.sellersService = new SellersServiceImpl();
         ReflectionTestUtils.setField(this.sellersService, "sellersApiProxy", this.sellersApiProxy);
+        ReflectionTestUtils.setField(this.sellersService, "msg", this.msg);
+        when(this.msg.getMessage(anyString(), any(), any())).thenReturn("Test error message");
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
