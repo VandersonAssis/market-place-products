@@ -53,7 +53,7 @@ public class ProductController extends BaseController implements ProductsApi {
     }
 
     @Override
-    public ResponseEntity<ProductListResponse> listProductsBySeller(String idSeller) {
+    public ResponseEntity listProductsBySeller(String idSeller) {
         log.info("id {} begin", idSeller);
 
         List<Product> products = this.productService.findByIdSeller(idSeller);
