@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: market-place-products
+spec:
+  selector:
+    app: market-place-products
+  ports:
+    - protocol: TCP
+      port: 8080
+      nodePort: 30084
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: market-place-products
+spec:
+  selector:
+    matchLabels:
+      app: market-place-products
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: market-place-products
+    spec:
+      containers:
+        - name: market-place-products
+          image: market-place-products
+          env:
+            - name: "KUBERNETES_NAMESPACE"
+              valueFrom:
+                fieldRef:
+                  fieldPath: "metadata.namespace"
+          ports:
+            - containerPort: 8080

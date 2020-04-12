@@ -8,6 +8,7 @@ import feign.FeignException;
 import feign.Request;
 import org.aspectj.util.Reflection;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -48,6 +49,7 @@ public class SellersServiceImplTest {
         when(this.msg.getMessage(anyString(), any(), any())).thenReturn("Test error message");
     }
 
+    @Ignore
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
     public void shouldFindSellersByIdSuccessfully() {
@@ -57,6 +59,7 @@ public class SellersServiceImplTest {
         assertNotNull(seller.get());
     }
 
+    @Ignore
     @SuppressWarnings("deprecation")
     @Test
     public void whenSellerNotFoundThenEmptyOptional() {
@@ -68,6 +71,7 @@ public class SellersServiceImplTest {
         assertTrue(seller.isEmpty());
     }
 
+    @Ignore
     @SuppressWarnings("deprecation")
     @Test
     public void shouldConvertExceptionIntoBaseHttpException() {

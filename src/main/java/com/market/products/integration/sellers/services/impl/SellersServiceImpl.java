@@ -26,25 +26,27 @@ public class SellersServiceImpl implements SellersService {
     @Autowired
     private MessageSource msg;
 
-    @Autowired
-    private SellersApiProxy sellersApiProxy;
+//    @Autowired
+//    private SellersApiProxy sellersApiProxy;
 
     @Override
     public Optional<Seller> findById(String sellerId) {
-        try {
-            log.info("{} begin", sellerId);
-            ResponseEntity<Seller> response = this.sellersApiProxy.findById(sellerId);
-            log.info("Returning response");
+        return Optional.empty();
 
-            return Optional.ofNullable(response.getBody());
-        } catch(FeignException ex) {
-            if(ex.status() == NOT_FOUND.value()) {
-                log.info("{} seller not found", sellerId);
-                return Optional.empty();
-            } else {
-                log.error("Error while trying to find {} seller", sellerId, ex);
-                throw new BaseHttpException(new ApiError(INTERNAL_SERVER_ERROR, this.msg.getMessage("internal.server.error", null, Locale.getDefault())));
-            }
-        }
+//        try {
+//            log.info("{} begin", sellerId);
+//            ResponseEntity<Seller> response = this.sellersApiProxy.findById(sellerId);
+//            log.info("Returning response");
+//
+//            return Optional.ofNullable(response.getBody());
+//        } catch(FeignException ex) {
+//            if(ex.status() == NOT_FOUND.value()) {
+//                log.info("{} seller not found", sellerId);
+//                return Optional.empty();
+//            } else {
+//                log.error("Error while trying to find {} seller", sellerId, ex);
+//                throw new BaseHttpException(new ApiError(INTERNAL_SERVER_ERROR, this.msg.getMessage("internal.server.error", null, Locale.getDefault())));
+//            }
+//        }
     }
 }
